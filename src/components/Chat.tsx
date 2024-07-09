@@ -1,18 +1,19 @@
 "use client";
 import { useSocket } from "@/app/hooks/useSocket";
 import React, { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
 
 export default function Chat() {
   const [message, setMessage] = useState("");
-  const [address, setAddress] = useState("");
+  const [recipientAddress, setRecipientAddress] = useState("");
   const [messages, setMessages] = useState<any>([]);
   const socket = useSocket();
-
+  const { address } = useAccount();
   useEffect(() => {
-    const userAddress = "0x6186f005bf26884F952099bE94dac1F1b3E429e1";
+    const senderAddress = address;
     if (socket) {
-      console.log("Registering address:", userAddress);
-      socket.emit("register", userAddress);
+      console.log("Registering address:", senderAddress);
+      socket.emit("register", senderAddress);
 
       socket.on("receive_message", (message: any) => {
         console.log("Received message:", message);
@@ -31,7 +32,7 @@ export default function Chat() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message, addresses: [address] }),
+      body: JSON.stringify({ message, addresses: [recipientAddress] }),
     });
     const result = await response.json();
     console.log("result in API", result);
@@ -53,9 +54,9 @@ export default function Chat() {
       <input
         className="mr-2 text-black"
         type="text"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        placeholder="Recipient Address"
+        value={recipientAddress}
+        onChange={(e) => setRecipientAddress(e.target.value)}
+        placeholder="Recipient address"
       />
       <button onClick={sendMessage}>Send</button>
       <ul>

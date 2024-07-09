@@ -1,3 +1,4 @@
+import { SOCKET_BASE_URL } from "@/config/constants";
 import { NextRequest, NextResponse } from "next/server";
 import { io } from "socket.io-client";
 
@@ -8,7 +9,7 @@ export async function POST(req: NextRequest) {
 
   console.log("message in API", message);
   console.log("addresses in API", addresses);
-  const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
+  const socket = io(`${SOCKET_BASE_URL}`, {
     withCredentials: true,
   });
 

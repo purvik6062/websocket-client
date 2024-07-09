@@ -1,9 +1,10 @@
+import { SOCKET_BASE_URL } from "@/config/constants";
 import { NextRequest, NextResponse } from "next/server";
 import { io } from "socket.io-client";
 
-export const revalidate = 0;
+// export const revalidate = 0;
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   const { num1, num2 } = await req.json();
 
   console.log(num1 + " " + num2);
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
   const result = num1 + num2;
 
   return new Promise((resolve) => {
-    const socket = io(`${process.env.NEXT_PUBLIC_SOCKET_URL}`, {
+    const socket = io(`${SOCKET_BASE_URL}`, {
       withCredentials: true,
     });
 
@@ -55,15 +56,15 @@ export async function POST(req: NextRequest) {
       );
     });
 
-    // // Add a timeout to ensure the function doesn't hang indefinitely
-    // setTimeout(() => {
-    //   socket.disconnect();
-    //   resolve(
-    //     NextResponse.json(
-    //       { success: false, error: "Operation timed out" },
-    //       { status: 504 }
-    //     )
-    //   );
-    // }, 10000);
+    // Add a timeout to ensure the function doesn't hang indefinitely
+    setTimeout(() => {
+      socket.disconnect();
+      resolve(
+        NextResponse.json(
+          { success: false, error: "Operation timed out" },
+          { status: 504 }
+        )
+      );
+    }, 10000);
   });
 }

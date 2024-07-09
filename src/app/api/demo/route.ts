@@ -21,8 +21,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const result = await response.json();
     // console.log(result);
     const { roomId } = await result.data;
-    // console.log(roomId);
-    // Return the found documents
     return NextResponse.json({ success: true, data: roomId }, { status: 200 });
   } catch (error) {
     console.error("Error retrieving data in create-room:", error);
